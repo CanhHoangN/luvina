@@ -1,0 +1,316 @@
+/**
+ * Copyright(C) 2020 Luvina Software Company
+ * Common.java, 03/02/2020 hoangnc
+ */
+package manageuser.utils.test;
+
+import static org.junit.Assert.*;
+
+import java.io.UnsupportedEncodingException;
+import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+
+import org.junit.Test;
+import org.junit.experimental.theories.DataPoints;
+import org.junit.experimental.theories.FromDataPoints;
+import org.junit.experimental.theories.Theories;
+import org.junit.experimental.theories.Theory;
+import org.junit.runner.RunWith;
+
+import manageuser.entites.TblUserEntity;
+import manageuser.entites.UserInfoEntity;
+import manageuser.utils.Common;
+/**
+ * Test chức năng cho class Common
+ * @author nguyencanhhoang
+ */
+@RunWith(Theories.class)
+public class CommonTest {
+	/**
+	 * Dữ liệu  test cho method getOfffSet
+	 */
+	@DataPoints("dataOffset")
+    public static int[][] dataOffset = new int[][] { { 5, 5, 20},{ 6, 5, 25},{4, 5, 15},{7, 5, 30},{2, 5, 5} };
+    /**
+	 * Dữ liệu  test cho method getLimit
+	 */
+    @DataPoints("dataLimit")
+    public static int[][] dataLimit = new int[][] { {5}};
+    /**
+	 * Dữ liệu  test cho method getTotalPage
+	 */
+    @DataPoints("dataTotalPage")
+    public static int[][] dataTotalPage = new int[][] { {10,5,2},{11,5,3},{20,5,4},{21,5,5}};
+    /**
+     * Dữ liệu  test cho method getLargestPaingOnpage
+     */
+    @DataPoints("largestPaingOnpage")
+    public static int[][] dataLargestPaingOnpage = new int[][] { {1,3,3},{2,3,3},{3,3,3}};
+    /**
+     * Dữ liệu  test cho method getTotalPage
+     */
+    @DataPoints("nextPage")
+    public static Object[][] dataNextPage = new Object[][] { {1,10,true},{1,3,false}, {1,1,false} , {10,11,false}, {0,0,false}};
+    /**
+     * Dữ liệu  test cho method getTotalPage
+     */
+    @DataPoints("dataPrePage")
+    public static Object[][] dataPrePage = new Object[][] { {4,10,true},{1,3,false}, {1,1,false} , {10,11,true}};
+    /**
+     * Dữ liệu  test cho method convertStringToInt
+     */
+    @DataPoints("convertStringToInt")
+    public static Object[][] dataConvertStringToInt =  new Object[][] { {"1",0,1},{"abc",0,0},{"5",0,5}};
+    /**
+     * Dữ liệu test cho method encodeWildCard
+     */
+    @DataPoints("encodeWildCard")
+    public static String[][] encodeWildCard = new String[][] { {"abc\\" ,"abc\\\\"},{"abc_","abc\\_"},{"a%","a\\%"}};
+    /**
+     * Dữ liệu test cho method convertToDate
+     */
+    @DataPoints("dataConvertToDate")
+    public static Object[][] dataConvertToDate = new Object[][] {{1999,06,23,"1999/06/23"},{2021,01,01,"2021/01/01"},{2000,02,29,"2020/02/29"}};
+    /**
+     * Dữ liệu test cho method toArrayInteger
+     */
+    @DataPoints("dataToArrayInteger")
+    public static Object[][] dataToArrayInteger = new Object[][] {{"1999-06-23","-",new ArrayList<>(Arrays.asList(1999, 6, 23))},{"2021/01/01","/",new ArrayList<>(Arrays.asList(2021,1,1))},{"2020/02/29","/",new ArrayList<>(Arrays.asList(2020,2,29))}};
+    /**
+     * Dữ liệu test cho method encryptPassword
+     */
+    @DataPoints("dataPassswordEncrypt")
+    public static String[][] dataPassswordEncrypt = new String[][]{{"password1","2cfec11bc6024a9ac3d39a56323a2161b69c989f"}, {"password2","5bac7a0f7bbf5c08758bbbe86d476826325899a0"}};
+    /**
+     * Hàm dùng để test vị trí lấy dữ liệu trong DB
+     * @param dataOffset data test tương ứng
+     */
+    @Theory
+    public void testGetOffset(@FromDataPoints("dataOffset") final int[] dataOffset) {
+        assertEquals(dataOffset[2], Common.getOffset(dataOffset[0], dataOffset[1]));
+    }
+    /**
+     * Hàm dùng để test lấy ra limit số bản ghi trên 1 page
+     * @param dataLimit data test tương ứng
+     */
+    @Theory
+    public void testGetLimit(@FromDataPoints("dataLimit") final int[] dataLimit) {
+        assertEquals(dataLimit[0], Common.getLimit());
+    }
+    /**
+     * Hàm dùng để test tính ra tổng số totalPage
+     * @param dataTotalPage data test tương ứng
+     */
+    @Theory
+    public void testGetTotalPage(@FromDataPoints("dataTotalPage") final int[] dataTotalPage) {
+        assertEquals(dataTotalPage[2], Common.getTotalPage(dataTotalPage[0], dataTotalPage[1]));
+    }
+    /**
+     * Hàm dùng để test lấy ra giá trị lớn nhất trong một khung list paging
+     * @param largestPaingOnpage data test tương ứng
+     */
+    @Theory
+    public void testGetLargestPaingOnpage(@FromDataPoints("largestPaingOnpage") final int[] largestPaingOnpage) {
+        assertEquals(largestPaingOnpage[2], Common.getLargestPaingOnpage(largestPaingOnpage[0], largestPaingOnpage[1]));
+    }
+    
+    /**
+     * Hàm dùng để test xem có tồn tại [>>] 
+     * @param dataNextPage data test tương ứng
+     */
+    @Theory
+    public void testCheckNextPage(@FromDataPoints("nextPage") final Object[] dataNextPage) {
+    	Integer currentPage = (Integer) dataNextPage[0];
+    	Integer totalPage = (Integer) dataNextPage[1];
+    	boolean dataAccpect = (boolean) dataNextPage[2];
+    	// Dữ liệu đúng với casetest
+        assertEquals(dataAccpect, Common.checkNextPage(currentPage, totalPage));
+    }
+    /**
+     * Hàm dùng để test xem có tồn tại [<<]
+     * @param dataPrePage data test tương ứng
+     */
+    @Theory
+    public void testCheckPrePage(@FromDataPoints("dataPrePage") final Object[] dataPrePage) {
+    	Integer currentPage = (Integer) dataPrePage[0];
+    	Integer totalPage = (Integer) dataPrePage[1];
+    	boolean dataAccpect = (boolean) dataPrePage[2];
+    	// Dữ liệu đúng với casetest
+        assertEquals(dataAccpect, Common.checkPrePage(currentPage, totalPage));
+        // thực hiện case  test
+    }
+    /**
+     * Hàm dùng để test convert dữ liệu từ String sang Int
+     * @param largestPaingOnpage data test tương ứng
+     */
+    @Theory
+    public void testConvertStringToInt(@FromDataPoints("convertStringToInt") final Object[] convertStringToInt) {
+    	String stringValue = (String) convertStringToInt[0];
+    	Integer valueDefault = (Integer) convertStringToInt[1];
+        assertEquals(convertStringToInt[2], Common.convertStringToInt(stringValue, valueDefault));
+        // thực hiện case test
+    }
+    /**
+     * Hàm dùng để test encode ký tự
+     * @param encodeWildCard data test tương ứng
+     */
+    @Theory
+    public void testEncodeWildCard(@FromDataPoints("encodeWildCard") final String[] encodeWildCard) {
+        assertEquals(encodeWildCard[1], Common.encodeWildCard(encodeWildCard[0]));
+        // thực hiện case test
+    }
+    /**
+     * Hàm dùng để test get lấy ra năm hiện tại
+     */
+    @Test
+    public void testGetYearNow() {
+    	int yearNow = 2021;
+    	// năm hiện tại
+    	assertEquals(yearNow, Common.getYearNow());
+    	// thực hiện case test
+    }
+    /**
+     * Hàm dùng để test get lấy ra tháng hiện tại
+     */
+    @Test
+    public void testGetMonthNow() {
+    	int monthNow = 2;
+    	// tháng hiện tại
+    	assertEquals(monthNow, Common.getMonthNow());
+    	// thực hiện case test
+    }
+    /**
+     * Hàm dùng để test get ra ngày hiện tại
+     */
+    @Test
+    public void testGetDateNow() {
+    	int dateNow = 4;
+    	// ngày hiện tại
+    	assertEquals(dateNow, Common.getDateNow());
+    	// thực hiện case test
+    }
+    /**
+     * Hàm dùng để test get ra list các năm nằm trong khoảng từ năm bắt đầu đến năm kết thúc
+     */
+    @Test
+    public void testGetListYear() {
+    	int startYear = 2018;
+    	// Năm băt đầu của danh sách
+    	int endYear = 2021;
+    	// Năm kết thúc của danh sách
+    	List<Integer> listYear = new ArrayList<>();
+    	// List chứa giá trị các năm
+    	listYear.add(2018);
+    	listYear.add(2019);
+    	listYear.add(2020);
+    	listYear.add(2021);
+    	// Thêm giá trị từ năm startYear đến năm endYear
+    	assertEquals(listYear, Common.getListYear(startYear, endYear));
+    	// thực hiện case test
+    }
+    /**
+     * Hàm dùng để test get ra list month giá trị từ 1 đến 12
+     */
+    @Test
+    public void testGetListMonth() {
+    	List<Integer> listMonth = new ArrayList<>();
+    	// List giá trị ứng với các tháng trong năm
+    	for (int i = 1; i <= 12; i++) {
+    		listMonth.add(i);
+    	}
+    	// Thực hiện add giá trị từ 1 đến 12
+    	assertEquals(listMonth, Common.getListMonth());
+    	// thực hiện case test
+    }
+    /**
+     * Hàm dùng để test get ra list day giá trị từ 1 đến 31
+     */
+    @Test
+    public void testGetListDay() {
+    	List<Integer> listDay = new ArrayList<>();
+    	// List giá trị ứng với các ngày của 1 tháng trong năm
+    	for (int i = 1; i <= 31; i++ ) {
+    		listDay.add(i);
+    	}
+    	// Thực hiện add giá trị từ 1 đến 31
+    	assertEquals(listDay, Common.getListDay());
+    }
+    // dataToArrayInteger
+    /**
+     * Hàm dùng để test convert String birthday sang list ngày, tháng, năm
+     */
+    @Theory
+    public void testToArrayInteger(@FromDataPoints("dataToArrayInteger") Object[] dataToArrayInteger) {
+    	assertEquals((List<Integer>)dataToArrayInteger[2],Common.toArrayInteger((String) dataToArrayInteger[0], (String)dataToArrayInteger[1]));
+    }
+    /**
+     * Hàm dùng để test mã hóa password
+     * @throws UnsupportedEncodingException 
+     * @throws NoSuchAlgorithmException 
+     */
+    @Theory
+    public void testEncryptPassword(@FromDataPoints("dataPassswordEncrypt") final String[] dataPassswordEncrypt) throws NoSuchAlgorithmException, UnsupportedEncodingException {
+    	assertEquals(dataPassswordEncrypt[1], Common.encryptPassword(dataPassswordEncrypt[0]));
+    }
+    /**
+     * Hàm dùng để test so sanh giữa 2 chuỗi
+     */
+    @Test
+    public void testCompareString() {
+    	String password = "nguyenvana";
+    	String passworConfirm = "nguyenvana";
+    	assertEquals(true,Common.compareString(password, passworConfirm));
+    }
+    @Test
+    public void testGetTblUser() throws UnsupportedEncodingException, NullPointerException, NoSuchAlgorithmException {
+    	UserInfoEntity userInfoEntity = new UserInfoEntity();
+    	userInfoEntity.setBirthDay(new Date("1999/06/23"));
+    	userInfoEntity.setGroupId(1);
+    	userInfoEntity.setEmail("nguyenvana@gmail.com");
+    	userInfoEntity.setFullName("Nguyen Van A");
+    	userInfoEntity.setFullNameKata("");
+    	userInfoEntity.setLoginName("nguyenvana");
+    	userInfoEntity.setTel("0947781266");
+    	userInfoEntity.setPassword("47e7baf846591b953b1171a31fd0069ee3ecec79");
+    	
+    	TblUserEntity tblUserEntity = new TblUserEntity();
+    	tblUserEntity.setBirthday(new Date("1999/06/23"));
+    	tblUserEntity.setGroupId(1);
+    	tblUserEntity.setEmail("nguyenvana@gmail.com");
+    	tblUserEntity.setFullName("Nguyen Van A");
+    	tblUserEntity.setFullNameKana("");
+    	tblUserEntity.setLoginName("nguyenvana");
+    	tblUserEntity.setTel("0947781266");
+    	tblUserEntity.setPassword("47e7baf846591b953b1171a31fd0069ee3ecec79");
+    	
+    	//assertSame(tblUserEntity, Common.getTblUser(userInfoEntity));
+    	// Arequals
+    	
+    }
+    /**
+     * Hàm dùng để test list giá trị chứa năm, tháng, ngày được convert từ String sang Integer
+     */
+    @Test
+    public void testGetListDateIntegers() {
+    	
+    	List<Integer>listDateInteger = new ArrayList<>();
+    	listDateInteger.add(1999);
+    	listDateInteger.add(6);
+    	listDateInteger.add(23);
+    	
+    	assertEquals(listDateInteger, Common.getListDateIntegers("1999", "6", "23"));
+    }
+    /**
+     * Hàm dùng để test đọc dữ liệu từ file properties
+     */
+    @Test
+    public void testReadFileProperties() {
+    	String urlFile = "";
+    	HashMap<String, String> propertiesMap = new HashMap<>();
+    	propertiesMap.put("", "");
+    }
+}
