@@ -1,0 +1,28 @@
+$_SERVER là một biến superglobal của PHP chứa thông tin về tiêu đề, đường dẫn và vị trí tập lệnh
+$_FILES Một mảng liên kết gồm các mục được tải lên tập lệnh hiện tại thông qua phương thức HTTP POST.
+$_REQUEST Mảng kết hợp bao gồm nội dung của $ _GET, $ _POST và $ _COOKIE.
+$_COOKIE Một mảng liên kết của các biến được chuyển đến tập lệnh hiện tại qua các cookie HTTP.
+    Value của cookie khi được gửi đi thì sẽ được auto URLencoded, và tự động decoded khi nhận được giá trị lại từ server
+    Khi muốn edit lại value của cookie thì bằng cách set lại giá trị sử dụng setCookie().
+    Để xoá cookie thì user setCookie() với thời gian là đã hết hạn.
+$php_errormsg một biến chứa văn bản của thông báo lỗi cuối cùng do PHP tạo ra.
+
+
+Error & Exception Handling
+Những throw exception được ném ra sẽ không được thực thi cho tới khi gặp được 1 block catch() đầu tiên
+nếu không tồn tại catch() nào để xử lý ngoại lệ PHP sẽ sử dụng đến
+=> set_exception_handler(callable|null $callback): string|array|object|null
+Đặt trình xử lý ngoại lệ mặc định nếu một ngoại lệ không được bắt trong khối try / catch.
+nếu không có trình xử lý ngoại lệ mặc định, thì ngoại lệ sẽ được chuyển đổi thành lỗi nghiêm trọng và sẽ được xử lý giống như lỗi truyền thống.
+a fatal error will be issued with an "Uncaught Exception" message.
+Error                                   EXCEPTION
+Là cách tiếp cấn thủ công               Ngoại lệ là một cách tiếp cận hướng đối tượng để lập trình.
+Việc xử lý lỗi mặc định trong PHP rất    Các ngoại lệ được sử dụng để thay đổi quy trình bình thường của tập lệnh nếu xảy ra lỗi được chỉ định.
+đơn giản. Một thông báo lỗi với tên tệp,
+số dòng và thông báo mô tả lỗi được gửi 
+đến trình duyệt.
+
+Điều này có thể được thực hiện bằng cách Basic Exception Handling using throw new Exception() in case of advance Exception handling youn have to use try and catch method.
+sử dụng Hàm die () trong PHP.
+
+https://www.geeksforgeeks.org/exceptions-vs-errors-in-php

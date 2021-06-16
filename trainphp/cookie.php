@@ -1,6 +1,7 @@
 <?php
 $cookie_name = "user";
 $cookie_value = "John Doe";
+// "/" ở đây có nghĩa là cookie sẽ tồn tại trong toàn bộ của trang web.
 setcookie($cookie_name, $cookie_value, time() + (86400 * 30), "/"); // 86400 = 1 day
 ?>
 <html>
